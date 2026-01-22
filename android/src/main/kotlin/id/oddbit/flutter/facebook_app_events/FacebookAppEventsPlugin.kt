@@ -64,6 +64,7 @@ class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
       "logPurchase" -> handlePurchased(call, result)
       "setAdvertiserTracking" -> handleSetAdvertiserTracking(call, result)
       "fetchDeferredAppLink" -> handleFetchDeferredAppLink(call, result)
+      "setDebugEnabled" -> handleSetDebugEnabled(call, result)
 
       else -> result.notImplemented()
     }
@@ -136,6 +137,24 @@ class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
       FacebookSdk.setIsDebugEnabled(true && enabled)
       FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
       FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
+    }
+
+    result.success(null)
+  }
+
+  private fun handleSetDebugEnabled(call: MethodCall, result: Result) {
+    val enabled = call.arguments as? Boolean ?: false
+
+    FacebookSdk.setIsDebugEnabled(enabled)
+
+    if (enabled) {
+      FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+      FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
+      FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_RAW_RESPONSES)
+    } else {
+      FacebookSdk.removeLoggingBehavior(LoggingBehavior.APP_EVENTS)
+      FacebookSdk.removeLoggingBehavior(LoggingBehavior.REQUESTS)
+      FacebookSdk.removeLoggingBehavior(LoggingBehavior.INCLUDE_RAW_RESPONSES)
     }
 
     result.success(null)

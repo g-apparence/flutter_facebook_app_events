@@ -471,6 +471,42 @@ class FacebookAppEvents {
     return _channel.invokeMethod<void>('setAdvertiserTracking', args);
   }
 
+  /// Enables or disables debug mode for Facebook SDK logging.
+  ///
+  /// When enabled, the SDK will log detailed information about events
+  /// to the device console, including:
+  /// - Event names and parameters being logged
+  /// - Network requests to Facebook servers
+  /// - Raw server responses (Android only)
+  ///
+  /// This is useful for verifying events during development since Facebook's
+  /// "Test Events" tab in Events Manager does not reliably show mobile app
+  /// events in real-time.
+  ///
+  /// **Important:** Debug mode should only be used during development.
+  /// Disable it in production builds to avoid performance overhead
+  /// and exposing sensitive information in logs.
+  ///
+  /// **Note:** This does NOT change whether events are sent to production.
+  /// All events still go to Facebook's production servers. For complete
+  /// isolation, use a separate Facebook App ID for testing via
+  /// [activateApp] with a different `applicationId`.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Enable debug logging during development
+  /// if (kDebugMode) {
+  ///   await facebookAppEvents.setDebugEnabled(true);
+  /// }
+  /// ```
+  ///
+  /// Console output examples:
+  /// - **iOS**: Look for `[FBSDKLog: FBSDKLoggingBehaviorAppEvents]` entries
+  /// - **Android**: Look for `FB4A` or `Facebook` tags in Logcat
+  Future<void> setDebugEnabled(bool enabled) {
+    return _channel.invokeMethod<void>('setDebugEnabled', enabled);
+  }
+
   /// The start of a paid subscription for a product or service you offer.
   ///
   /// See documentation:

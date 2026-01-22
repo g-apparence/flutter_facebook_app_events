@@ -92,6 +92,8 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
             handleSetAdvertiserTracking(call, result: result)
         case "fetchDeferredAppLink":
             handleFetchDeferredAppLink(call, result: result)
+        case "setDebugEnabled":
+            handleSetDebugEnabled(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -238,6 +240,20 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
 
         Settings.shared.isAdvertiserTrackingEnabled = enabled
         Settings.shared.isAdvertiserIDCollectionEnabled = enabled && collectId
+
+        result(nil)
+    }
+
+    private func handleSetDebugEnabled(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let enabled = call.arguments as? Bool ?? false
+
+        if enabled {
+            Settings.shared.enableLoggingBehavior(.appEvents)
+            Settings.shared.enableLoggingBehavior(.networkRequests)
+        } else {
+            Settings.shared.disableLoggingBehavior(.appEvents)
+            Settings.shared.disableLoggingBehavior(.networkRequests)
+        }
 
         result(nil)
     }
