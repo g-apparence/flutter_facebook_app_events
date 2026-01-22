@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import FBSDKCoreKit
 import FBSDKCoreKit_Basics
+import FBAEMKit
 
 public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -20,14 +21,43 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
         registrar.addApplicationDelegate(instance)
     }
 
-    /// Connect app delegate with SDK
+    /// Connect app delegate with SDK for URL schemes
     public func application(
         _ app: UIApplication,
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
+        // Handle AEM (Aggregated Event Measurement) for iOS 14.5+ attribution
+        // This is required for re-engagement ad campaigns to work properly
+        if let appId = Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String {
+            AEMReporter.configure(networker: nil, appID: appId, reporter: nil)
+            AEMReporter.enable()
+            AEMReporter.handle(url)
+        }
+
         // For Facebook SDK 18.x+, use the simplified URL handling
         return ApplicationDelegate.shared.application(app, open: url, options: options)
+    }
+
+    /// Handle Universal Links for AEM attribution
+    public func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        // Handle AEM for Universal Links
+        // Note: Facebook SDK handles Universal Links internally via swizzling,
+        // but we explicitly handle AEM here to ensure attribution works
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+           let url = userActivity.webpageURL,
+           let appId = Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String {
+            AEMReporter.configure(networker: nil, appID: appId, reporter: nil)
+            AEMReporter.enable()
+            AEMReporter.handle(url)
+        }
+
+        // Return false to allow other handlers to process the activity
+        return false
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
