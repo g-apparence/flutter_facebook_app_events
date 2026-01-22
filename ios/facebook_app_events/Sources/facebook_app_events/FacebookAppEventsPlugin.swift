@@ -60,6 +60,8 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
             handleHandleGetAnonymousId(call, result: result)
         case "setAdvertiserTracking":
             handleSetAdvertiserTracking(call, result: result)
+        case "fetchDeferredAppLink":
+            handleFetchDeferredAppLink(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -208,5 +210,62 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
         Settings.shared.isAdvertiserIDCollectionEnabled = enabled && collectId
 
         result(nil)
+    }
+
+    private func handleFetchDeferredAppLink(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        AppLinkUtility.fetchDeferredAppLink { url, error in
+            if let error = error {
+                print("[FacebookAppEvents] fetchDeferredAppLink error: \(error.localizedDescription)")
+                result(nil)
+                return
+            }
+
+            guard let url = url else {
+                result(nil)
+                return
+            }
+
+            var data: [String: Any] = [
+                "targetUrl": url.absoluteString
+            ]
+
+            // Parse URL query parameters for campaign data
+            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+               let queryItems = components.queryItems {
+                var queryParams: [String: String] = [:]
+                for item in queryItems {
+                    if let value = item.value {
+                        queryParams[item.name] = value
+
+                        // Extract known Facebook parameters
+                        if item.name == "fb_click_time_utc" {
+                            data["clickTimestamp"] = value
+                        }
+                        if item.name == "fb_ref" {
+                            data["ref"] = value
+                        }
+                    }
+                }
+                if !queryParams.isEmpty {
+                    data["queryParameters"] = queryParams
+                }
+            }
+
+            // Try to extract data from deeplink_context if present
+            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+               let deeplinkContext = components.queryItems?.first(where: { $0.name == "deeplink_context" })?.value,
+               let contextData = deeplinkContext.data(using: .utf8),
+               let contextJson = try? JSONSerialization.jsonObject(with: contextData) as? [String: Any] {
+                if let promoCode = contextJson["promo_code"] as? String {
+                    data["promotionCode"] = promoCode
+                }
+                // Also check for ref in deeplink_context if not already set from query params
+                if data["ref"] == nil, let ref = contextJson["fb_ref"] as? String {
+                    data["ref"] = ref
+                }
+            }
+
+            result(data)
+        }
     }
 }

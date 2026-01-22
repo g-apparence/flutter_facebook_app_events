@@ -174,6 +174,44 @@ class FacebookAppEvents {
     return _channel.invokeMethod<String>('getAnonymousId');
   }
 
+  /// Fetches deferred app link data for attribution from Facebook ad campaigns.
+  ///
+  /// This method retrieves campaign attribution data when a user installs the app
+  /// after clicking a Facebook ad. The data can be used to link app events back
+  /// to the originating ad campaign for better attribution.
+  ///
+  /// Returns a map containing:
+  /// - `targetUrl`: The deep link URL from the ad (may contain campaign parameters)
+  /// - `clickTimestamp`: UTC timestamp of when the ad was clicked (if available)
+  /// - `promotionCode`: Promotional code from the ad (if available)
+  ///
+  /// Returns `null` if no deferred app link data is available.
+  ///
+  /// **Important notes:**
+  /// - This method only returns data **once** per app install. Subsequent calls
+  ///   will return `null`.
+  /// - On iOS 14.5+, requires App Tracking Transparency (ATT) authorization.
+  ///   Call [setAdvertiserTracking] with `enabled: true` after obtaining user
+  ///   consent before calling this method.
+  ///
+  /// Example:
+  /// ```dart
+  /// final appLink = await facebookAppEvents.fetchDeferredAppLink();
+  /// if (appLink != null) {
+  ///   final targetUrl = appLink['targetUrl'] as String?;
+  ///   final clickTime = appLink['clickTimestamp'] as String?;
+  ///   // Parse campaign IDs from targetUrl query parameters
+  /// }
+  /// ```
+  ///
+  /// See documentation:
+  /// - [iOS AppLinkUtility](https://developers.facebook.com/docs/reference/iossdk/current/FBSDKCoreKit/classes/fbsdkapplink.html)
+  Future<Map<String, dynamic>?> fetchDeferredAppLink() async {
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>?>('fetchDeferredAppLink');
+    if (result == null) return null;
+    return result.cast<String, dynamic>();
+  }
+
   /// Log an app event with the specified [name] and the supplied [parameters] value.
   ///
   /// - [parameters] should contain only JSON-compatible values. On Android
