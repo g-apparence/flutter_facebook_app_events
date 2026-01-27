@@ -4,7 +4,7 @@ import FBSDKCoreKit
 import FBSDKCoreKit_Basics
 import FBAEMKit
 
-public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
+public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(
             name: "flutter.oddbit.id/facebook_app_events",
@@ -19,6 +19,7 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
 
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.addApplicationDelegate(instance)
+        registrar.addSceneDelegate(instance)
     }
 
     /// Connect app delegate with SDK for URL schemes
@@ -57,6 +58,45 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin {
         }
 
         // Return false to allow other handlers to process the activity
+        return false
+    }
+
+    // MARK: - UISceneDelegate (Flutter 3.38+ / UIScene lifecycle)
+
+    /// Scene-based URL handler for deep links (replaces application:open:options: on UIScene apps)
+    public func scene(
+        _ scene: UIScene,
+        openURLContexts URLContexts: Set<UIOpenURLContext>
+    ) -> Bool {
+        for context in URLContexts {
+            let url = context.url
+            if let appId = Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String {
+                AEMReporter.configure(networker: nil, appID: appId, reporter: nil)
+                AEMReporter.enable()
+                AEMReporter.handle(url)
+            }
+            ApplicationDelegate.shared.application(
+                UIApplication.shared,
+                open: url,
+                sourceApplication: context.options.sourceApplication,
+                annotation: context.options.annotation
+            )
+        }
+        return true
+    }
+
+    /// Scene-based Universal Links handler (replaces application:continue:restorationHandler: on UIScene apps)
+    public func scene(
+        _ scene: UIScene,
+        continue userActivity: NSUserActivity
+    ) -> Bool {
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+           let url = userActivity.webpageURL,
+           let appId = Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String {
+            AEMReporter.configure(networker: nil, appID: appId, reporter: nil)
+            AEMReporter.enable()
+            AEMReporter.handle(url)
+        }
         return false
     }
 
