@@ -134,6 +134,8 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
             handleFetchDeferredAppLink(call, result: result)
         case "setDebugEnabled":
             handleSetDebugEnabled(call, result: result)
+        case "recordAndUpdateAEMEvent":
+            handleRecordAndUpdateAEMEvent(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -207,11 +209,20 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
             }
         )
 
-        if let valueToSum = arguments["_valueToSum"] as? Double {
+        let valueToSum = arguments["_valueToSum"] as? Double
+
+        if let valueToSum = valueToSum {
             AppEvents.shared.logEvent(AppEvents.Name(eventName), valueToSum: valueToSum, parameters: parameters)
         } else {
             AppEvents.shared.logEvent(AppEvents.Name(eventName), parameters: parameters)
         }
+
+        // Automatically record AEM event for iOS 14.5+ attribution
+        let currency = rawParams["fb_currency"] as? String
+        AEMReporter.recordAndUpdateEvent(eventName,
+                                          currency: currency,
+                                          value: valueToSum as NSNumber?,
+                                          parameters: rawParams)
 
         result(nil)
     }
@@ -270,6 +281,13 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
         )
 
         AppEvents.shared.logPurchase(amount: amount, currency: currency, parameters: parameters)
+
+        // Automatically record AEM event for iOS 14.5+ attribution
+        AEMReporter.recordAndUpdateEvent("fb_mobile_purchase",
+                                          currency: currency,
+                                          value: NSNumber(value: amount),
+                                          parameters: rawParams)
+
         result(nil)
     }
 
@@ -295,6 +313,20 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
             Settings.shared.disableLoggingBehavior(.networkRequests)
         }
 
+        result(nil)
+    }
+
+    private func handleRecordAndUpdateAEMEvent(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let arguments = call.arguments as? [String: Any] ?? [:]
+        let eventName = arguments["eventName"] as? String ?? ""
+        let value = arguments["value"] as? NSNumber ?? 0
+        let currency = arguments["currency"] as? String
+        let parameters = arguments["parameters"] as? [String: Any]
+
+        AEMReporter.recordAndUpdateEvent(eventName,
+                                          currency: currency,
+                                          value: value,
+                                          parameters: parameters)
         result(nil)
     }
 

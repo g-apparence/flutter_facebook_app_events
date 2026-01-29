@@ -65,6 +65,7 @@ class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
       "setAdvertiserTracking" -> handleSetAdvertiserTracking(call, result)
       "fetchDeferredAppLink" -> handleFetchDeferredAppLink(call, result)
       "setDebugEnabled" -> handleSetDebugEnabled(call, result)
+      "recordAndUpdateAEMEvent" -> result.success(null) // AEM is iOS-only, no-op on Android
 
       else -> result.notImplemented()
     }
