@@ -219,7 +219,7 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
 
         // Automatically record AEM event for iOS 14.5+ attribution
         let currency = rawParams["fb_currency"] as? String
-        AEMReporter.recordAndUpdateEvent(eventName,
+        AEMReporter.recordAndUpdate(event: eventName,
                                           currency: currency,
                                           value: valueToSum as NSNumber?,
                                           parameters: rawParams)
@@ -283,7 +283,7 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
         AppEvents.shared.logPurchase(amount: amount, currency: currency, parameters: parameters)
 
         // Automatically record AEM event for iOS 14.5+ attribution
-        AEMReporter.recordAndUpdateEvent("fb_mobile_purchase",
+        AEMReporter.recordAndUpdate(event: "fb_mobile_purchase",
                                           currency: currency,
                                           value: NSNumber(value: amount),
                                           parameters: rawParams)
@@ -323,7 +323,7 @@ public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeC
         let currency = arguments["currency"] as? String
         let parameters = arguments["parameters"] as? [String: Any]
 
-        AEMReporter.recordAndUpdateEvent(eventName,
+        AEMReporter.recordAndUpdate(event: eventName,
                                           currency: currency,
                                           value: value,
                                           parameters: parameters)
