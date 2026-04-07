@@ -42,6 +42,7 @@ class FacebookAppEvents {
   static const paramNameAdType = "fb_ad_type";
   static const paramNameCurrency = "fb_currency";
   static const paramNameOrderId = "fb_order_id";
+  static const paramNameEventId = "event_id";
   static const paramNameRegistrationMethod = "fb_registration_method";
   static const paramNamePaymentInfoAvailable = "fb_payment_info_available";
   static const paramNameNumItems = "fb_num_items";
@@ -426,12 +427,17 @@ class FacebookAppEvents {
   Future<void> logPurchase({
     required double amount,
     required String currency,
+    String? eventId,
     Map<String, dynamic>? parameters,
   }) {
+    final mergedParameters = <String, dynamic>{
+      if (eventId != null) paramNameEventId: eventId,
+      ...?parameters,
+    };
     final args = <String, dynamic>{
       'amount': amount,
       'currency': currency,
-      'parameters': parameters,
+      'parameters': mergedParameters.isNotEmpty ? mergedParameters : null,
     };
     return _channel.invokeMethod<void>('logPurchase', _filterOutNulls(args));
   }
@@ -576,6 +582,7 @@ class FacebookAppEvents {
     double? price,
     String? currency,
     required String orderId,
+    String? eventId,
   }) {
     return logEvent(
       name: eventNameSubscribe,
@@ -583,6 +590,7 @@ class FacebookAppEvents {
       parameters: {
         paramNameCurrency: currency,
         paramNameOrderId: orderId,
+        if (eventId != null) paramNameEventId: eventId,
       },
     );
   }
@@ -598,6 +606,7 @@ class FacebookAppEvents {
     double? price,
     String? currency,
     required String orderId,
+    String? eventId,
   }) {
     return logEvent(
       name: eventNameStartTrial,
@@ -605,6 +614,7 @@ class FacebookAppEvents {
       parameters: {
         paramNameCurrency: currency,
         paramNameOrderId: orderId,
+        if (eventId != null) paramNameEventId: eventId,
       },
     );
   }
