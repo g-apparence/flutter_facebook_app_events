@@ -4,6 +4,8 @@ import androidx.annotation.NonNull
 
 import android.app.Application
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
@@ -283,48 +285,50 @@ class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
     }
 
     AppLinkData.fetchDeferredAppLinkData(context) { appLinkData ->
-      if (appLinkData == null) {
-        result.success(null)
-        return@fetchDeferredAppLinkData
-      }
+      Handler(Looper.getMainLooper()).post {
+        if (appLinkData == null) {
+          result.success(null)
+          return@post
+        }
 
-      val targetUri = appLinkData.targetUri
-      if (targetUri == null) {
-        result.success(null)
-        return@fetchDeferredAppLinkData
-      }
+        val targetUri = appLinkData.targetUri
+        if (targetUri == null) {
+          result.success(null)
+          return@post
+        }
 
-      val data = mutableMapOf<String, Any>(
-        "targetUrl" to targetUri.toString()
-      )
+        val data = mutableMapOf<String, Any>(
+          "targetUrl" to targetUri.toString()
+        )
 
-      // Extract query parameters from the target URI
-      val queryParams = mutableMapOf<String, String>()
-      targetUri.queryParameterNames?.forEach { paramName ->
-        targetUri.getQueryParameter(paramName)?.let { paramValue ->
-          queryParams[paramName] = paramValue
+        // Extract query parameters from the target URI
+        val queryParams = mutableMapOf<String, String>()
+        targetUri.queryParameterNames?.forEach { paramName ->
+          targetUri.getQueryParameter(paramName)?.let { paramValue ->
+            queryParams[paramName] = paramValue
 
-          // Extract known Facebook parameters
-          if (paramName == "fb_click_time_utc") {
-            data["clickTimestamp"] = paramValue
+            // Extract known Facebook parameters
+            if (paramName == "fb_click_time_utc") {
+              data["clickTimestamp"] = paramValue
+            }
           }
         }
-      }
-      if (queryParams.isNotEmpty()) {
-        data["queryParameters"] = queryParams
-      }
+        if (queryParams.isNotEmpty()) {
+          data["queryParameters"] = queryParams
+        }
 
-      // Add promotion code if available
-      appLinkData.promotionCode?.let { promoCode ->
-        data["promotionCode"] = promoCode
-      }
+        // Add promotion code if available
+        appLinkData.promotionCode?.let { promoCode ->
+          data["promotionCode"] = promoCode
+        }
 
-      // Add referrer data if available
-      appLinkData.ref?.let { ref ->
-        data["ref"] = ref
-      }
+        // Add referrer data if available
+        appLinkData.ref?.let { ref ->
+          data["ref"] = ref
+        }
 
-      result.success(data)
+        result.success(data)
+      }
     }
   }
 }
