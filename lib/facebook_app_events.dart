@@ -213,7 +213,7 @@ class FacebookAppEvents {
           .timeout(const Duration(seconds: 1));
       if (result == null) return null;
       return result.cast<String, dynamic>();
-    } on TimeoutException {
+    } catch (_) {
       return null;
     }
   }
