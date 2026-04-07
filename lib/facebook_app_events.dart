@@ -207,9 +207,15 @@ class FacebookAppEvents {
   /// See documentation:
   /// - [iOS AppLinkUtility](https://developers.facebook.com/docs/reference/iossdk/current/FBSDKCoreKit/classes/fbsdkapplink.html)
   Future<Map<String, dynamic>?> fetchDeferredAppLink() async {
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>?>('fetchDeferredAppLink');
-    if (result == null) return null;
-    return result.cast<String, dynamic>();
+    try {
+      final result = await _channel
+          .invokeMethod<Map<dynamic, dynamic>?>('fetchDeferredAppLink')
+          .timeout(const Duration(seconds: 1));
+      if (result == null) return null;
+      return result.cast<String, dynamic>();
+    } on TimeoutException {
+      return null;
+    }
   }
 
   /// Log an app event with the specified [name] and the supplied [parameters] value.
