@@ -1,4 +1,4 @@
-package id.oddbit.flutter.facebook_app_events
+package io.apparence.facebook_flutter_sdk
 
 import androidx.annotation.NonNull
 
@@ -36,7 +36,7 @@ class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
   private var application: Application? = null
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter.oddbit.id/facebook_app_events")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "io.apparence.fbsdk")
     channel.setMethodCallHandler(this)
 
     application = flutterPluginBinding.applicationContext.applicationContext as? Application

@@ -1,6 +1,6 @@
-# facebook_app_events_example
+# facebook_flutter_sdk_example
 
-Demonstrates how to use the `facebook_app_events` plugin.
+Demonstrates how to use the `facebook_flutter_sdk` plugin.
 
 ## Run the example
 

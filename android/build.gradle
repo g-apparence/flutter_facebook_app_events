@@ -1,4 +1,4 @@
-group = "id.oddbit.flutter.facebook_app_events"
+group = "io.apparence.facebook_flutter_sdk"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace "id.oddbit.flutter.facebook_app_events"
+    namespace "io.apparence.facebook_flutter_sdk"
 
     compileSdk = 34
 

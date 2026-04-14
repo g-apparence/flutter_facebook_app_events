@@ -1,5 +1,5 @@
 PODS:
-  - facebook_app_events (0.24.0):
+  - facebook_flutter_sdk (0.24.0):
     - FBSDKCoreKit (~> 18.0)
     - Flutter
   - FBAEMKit (18.0.0):
@@ -11,7 +11,7 @@ PODS:
   - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
+  - facebook_flutter_sdk (from `.symlinks/plugins/facebook_flutter_sdk/ios`)
   - Flutter (from `Flutter`)
 
 SPEC REPOS:
@@ -21,13 +21,13 @@ SPEC REPOS:
     - FBSDKCoreKit_Basics
 
 EXTERNAL SOURCES:
-  facebook_app_events:
-    :path: ".symlinks/plugins/facebook_app_events/ios"
+  facebook_flutter_sdk:
+    :path: ".symlinks/plugins/facebook_flutter_sdk/ios"
   Flutter:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  facebook_app_events: 58a1b62fd50f6009907bd167fc26b3d043e97197
+  facebook_flutter_sdk: 58a1b62fd50f6009907bd167fc26b3d043e97197
   FBAEMKit: e34530df538b8eb8aeb53c35867715ba6c63ef0c
   FBSDKCoreKit: d3f479a69127acebb1c6aad91c1a33907bcf6c2f
   FBSDKCoreKit_Basics: 017b6dc2a1862024815a8229e75661e627ac1e29

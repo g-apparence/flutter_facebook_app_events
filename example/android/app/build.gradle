@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "id.oddbit.flutter.facebook_app_events_example"
+    namespace = "io.apparence.facebook_flutter_sdk_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "id.oddbit.flutter.facebook_app_events_example"
+        applicationId = "io.apparence.facebook_flutter_sdk_example"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

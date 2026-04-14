@@ -7,7 +7,7 @@ import FBAEMKit
 public class FacebookAppEventsPlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(
-            name: "flutter.oddbit.id/facebook_app_events",
+            name: "io.apparence.fbsdk",
             binaryMessenger: registrar.messenger()
         )
         let instance = FacebookAppEventsPlugin()
