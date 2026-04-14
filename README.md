@@ -214,8 +214,7 @@ Please read our [contribution guideline](CONTRIBUTING.md) for more info.
 
 ### 💬 Discussions and ideas
 We're happy to discuss and talk about ideas in the
-[repository discussions](https://github.com/oddbit/flutter_facebook_flutter_sdk/discussions) and/or post your
-question to [StackOverflow](https://stackoverflow.com/search?q=facebook+app+events+flutter).
+[repository discussions](https://github.com/oddbit/flutter_facebook_flutter_sdk/discussions) and/or post your questions in the repository issues.
 
 Feel free to open a thread if you are having any questions on how to use either the Facebook App Events as a reporting tool
 itself or even on how to use this plugin. 
