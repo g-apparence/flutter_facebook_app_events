@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1+3
+- update to ios 13.0+ and fix swift package manager support for iOS
+
 ## 1.0.0+1
 
 Initial release of `facebook_flutter_sdk`, a fork of [facebook_app_events](https://pub.dev/packages/facebook_app_events).
