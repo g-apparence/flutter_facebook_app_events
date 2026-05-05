@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "facebook_flutter_sdk",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v13)
     ],
     products: [
         // If the plugin name contains "_", the library name must use "-".
