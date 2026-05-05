@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         // If the plugin name contains "_", the library name must use "-".
-        .library(name: "facebook-app-events", targets: ["facebook_flutter_sdk"])
+        .library(name: "facebook-flutter-sdk", targets: ["facebook_flutter_sdk"])
     ],
     dependencies: [
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", from: "18.0.0")
